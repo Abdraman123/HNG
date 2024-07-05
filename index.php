@@ -34,7 +34,7 @@ function getClientLocation($ip) {
 function getWeather($city) {
     // Get the API key from environment variables
     $apKey = $_ENV['OPENWEATHER_API_KEY'];
-    $url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apKey";
+    $url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apKey&units=metric";
     $response = file_get_contents($url);
     $data = json_decode($response, true);
     return $data['main']['temp']; // Return the temperature from the API response data

@@ -23,7 +23,7 @@ function getClientIp() {
 
 // Function to get the client's Location based on IP
 function getClientLocation($ip) {
-    $apiKey = getenv('IPINFO_API_KEY');
+    $apiKey = $_ENV['IPINFO_API_KEY'];
     $url = "https://ipinfo.io/json?token=$apiKey";
     $response = file_get_contents($url);
     $data = json_decode($response, true);

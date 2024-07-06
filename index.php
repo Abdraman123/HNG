@@ -11,16 +11,24 @@ $dotenv->load();
 header("Content-Type: application/json");
 
 // Function to get the client's IP address
-function getClientIp() {
-    if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
-        return $_SERVER["HTTP_CLIENT_IP"];
-    } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-        return $_SERVER["HTTP_X_FORWARDED_FOR"];
-    } else {
-        return $_SERVER["REMOTE_ADDR"];
-    }
-}
+function getClientIpFromHeaders() {
+    $headers = [
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_REAL_IP',
+        'HTTP_CLIENT_IP',
+        'HTTP_CF_CONNECTING_IP' // Cloudflare
+    ];
 
+    foreach ($headers as $header) {
+        if (!empty($_SERVER[$header])) {
+            $ipList = explode(',', $_SERVER[$header]);
+            $ip = trim(end($ipList)); // In case of multiple IPs, get the last one
+            return $ip;
+        }
+    }
+
+    return 'Unknown';
+}
 // Function to get the client's Location based on IP
 function getClientLocation($ip) {
     $apiKey = $_ENV['IPINFO_API_KEY'];
@@ -42,7 +50,7 @@ function getWeather($city) {
 
 // Main logic
 $visitorName = isset($_GET['visitor_name']) ? trim($_GET['visitor_name'], '"') : 'Visitor';
-$clientIp = getClientIp();
+$clientIp = getClientIpFromHeaders();
 $location = getClientLocation($clientIp);
 $temperature = getWeather($location);
 
